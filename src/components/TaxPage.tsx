@@ -7,6 +7,7 @@ const TaxPage = () => {
   const [taxPosition, setTaxPosition] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [transactionType, setTransactionType] = useState<string>("");
+  const [amount, setAmount] = useState("");
 
   const handleButtonClick = async () => {
     if (!date) {
@@ -56,7 +57,30 @@ const TaxPage = () => {
         {transactionType
           ? `Chosen transaction: ${transactionType}`
           : "No transaction selected"}
+        {transactionType ? (
+          <div>
+            {transactionType === "SALES" ? (
+              <></>
+            ) : (
+              <div className={styles.taxPaymentForm}>
+                <div className={styles.inputGroup}>
+                  <label>Amount (in pennies)</label>
+                  <input
+                    type="text"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className={styles.inputField}
+                    placeholder="Enter amount e.g. 74901"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
+
       <div className={styles.centerSide}>
         <h1 className={styles.title}>Query Tax Position</h1>
         <p className={styles.instruction}>
