@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./TaxPage.module.scss";
 
 type Item = {
@@ -19,40 +19,54 @@ const TaxPage = () => {
     { itemId: "", cost: "", taxRate: "" },
   ]);
   const [amount, setAmount] = useState("");
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
-  const canSendIngest = false;
+
+  // whenever something in form is changed, cehck if all valid
+  useEffect(() => {
+    validateIngest(); 
+  }, [transactionType, date, invoiceId, items, amount]); 
+
 
   const validateIngest = () => {
+    let validationError = null;
+
     if (transactionType === "TAX_PAYMENT") {
       if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
-        return "Invalid amount for Tax Payment. Please enter a valid amount.";
+        validationError =
+          "Invalid amount for Tax Payment. Please enter a valid amount.";
       }
     } else if (transactionType === "SALES") {
       if (!invoiceId) {
-        return "Invoice ID is required.";
+        validationError = "Invoice ID is required.";
       }
 
       if (items.length === 0) {
-        return "At least one item is required for a Sales transaction.";
+        validationError =
+          "At least one item is required for a Sales transaction.";
       }
 
       for (const item of items) {
         if (!item.itemId || !item.cost || !item.taxRate) {
-          return "Each item must have an Item ID, Cost, and Tax Rate.";
+          validationError =
+            "Each item must have an Item ID, Cost, and Tax Rate.";
         }
 
         if (isNaN(Number(item.cost)) || Number(item.cost) <= 0) {
-          return "Item cost must be a positive number.";
+          validationError = "Item cost must be a positive number.";
         }
 
         if (isNaN(Number(item.taxRate)) || Number(item.taxRate) <= 0) {
-          return "Item tax rate must be a positive number.";
+          validationError = "Item tax rate must be a positive number.";
         }
       }
     }
 
-    return null;
+    setIsFormValid(validationError === null);
+
+    return validationError;
   };
+
   const handleItemChange = (
     index: number,
     field: keyof Item,
@@ -72,7 +86,37 @@ const TaxPage = () => {
     setItems(updatedItems);
   };
 
-  
+  const handleSubmit = async () => {
+    // validate, don't proceed if error there
+    const validationError = validateIngest();
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
+    // get data
+    const transactionData = {
+      eventType: transactionType,
+      date,
+      ...(transactionType === "SALES" ? { invoiceId, items } : { amount }),
+    };
+
+    // send to transactions api
+    try {
+      const response = await fetch("/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(transactionData),
+      });
+
+      const result = await response.json();
+      alert(result.message || "Transaction sent successfully!");
+    } catch (error) {
+      alert("Error sending transaction data");
+    }
+  };
 
   const handleButtonClick = async () => {
     if (!date) {
@@ -205,7 +249,13 @@ const TaxPage = () => {
           <></>
         )}
         {transactionType ? (
-          <button className={styles.calculateButton}>Submit Transaction</button>
+          <button
+            className={styles.calculateButton}
+            disabled={!isFormValid}
+            onClick={handleSubmit}
+          >
+            Submit Transaction
+          </button>
         ) : (
           ""
         )}
