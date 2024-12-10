@@ -2,12 +2,77 @@
 import React, { useState } from "react";
 import styles from "./TaxPage.module.scss";
 
+type Item = {
+  itemId: string;
+  cost: string;
+  taxRate: string;
+};
+
 const TaxPage = () => {
   const [date, setDate] = useState("");
   const [taxPosition, setTaxPosition] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [transactionType, setTransactionType] = useState<string>("");
+
+  const [invoiceId, setInvoiceId] = useState("");
+  const [items, setItems] = useState<Item[]>([
+    { itemId: "", cost: "", taxRate: "" },
+  ]);
   const [amount, setAmount] = useState("");
+
+  const canSendIngest = false;
+
+  const validateIngest = () => {
+    if (transactionType === "TAX_PAYMENT") {
+      if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+        return "Invalid amount for Tax Payment. Please enter a valid amount.";
+      }
+    } else if (transactionType === "SALES") {
+      if (!invoiceId) {
+        return "Invoice ID is required.";
+      }
+
+      if (items.length === 0) {
+        return "At least one item is required for a Sales transaction.";
+      }
+
+      for (const item of items) {
+        if (!item.itemId || !item.cost || !item.taxRate) {
+          return "Each item must have an Item ID, Cost, and Tax Rate.";
+        }
+
+        if (isNaN(Number(item.cost)) || Number(item.cost) <= 0) {
+          return "Item cost must be a positive number.";
+        }
+
+        if (isNaN(Number(item.taxRate)) || Number(item.taxRate) <= 0) {
+          return "Item tax rate must be a positive number.";
+        }
+      }
+    }
+
+    return null;
+  };
+  const handleItemChange = (
+    index: number,
+    field: keyof Item,
+    value: string
+  ) => {
+    const updatedItems = [...items];
+    updatedItems[index][field] = value;
+    setItems(updatedItems);
+  };
+
+  const handleAddItem = () => {
+    setItems([...items, { itemId: "", cost: "", taxRate: "" }]);
+  };
+
+  const handleRemoveItem = (index: any) => {
+    const updatedItems = items.filter((_, i) => i !== index);
+    setItems(updatedItems);
+  };
+
+  
 
   const handleButtonClick = async () => {
     if (!date) {
@@ -51,7 +116,7 @@ const TaxPage = () => {
           >
             <option value={""}>Select transaction type</option>
             <option value={"SALES"}>Sales</option>
-            <option value={"TAX_PAYMENR"}>Tax Payment</option>
+            <option value={"TAX_PAYMENT"}>Tax Payment</option>
           </select>
         </div>
         {transactionType
@@ -60,7 +125,67 @@ const TaxPage = () => {
         {transactionType ? (
           <div>
             {transactionType === "SALES" ? (
-              <></>
+              <div className={styles.salesForm}>
+                <div className={styles.inputGroup}>
+                  <label>Invoice ID</label>
+                  <input
+                    type="text"
+                    value={invoiceId}
+                    onChange={(e) => setInvoiceId(e.target.value)}
+                    className={styles.inputField}
+                    placeholder="Enter invoice ID"
+                  />
+                </div>
+
+                <div className={styles.itemsSection}>
+                  <h3>Items</h3>
+                  {items.map((item, index) => (
+                    <div key={index} className={styles.itemRow}>
+                      <input
+                        type="text"
+                        value={item.itemId}
+                        onChange={(e) =>
+                          handleItemChange(index, "itemId", e.target.value)
+                        }
+                        className={styles.inputField}
+                        placeholder="Item ID"
+                      />
+                      <input
+                        type="number"
+                        value={item.cost}
+                        onChange={(e) =>
+                          handleItemChange(index, "cost", e.target.value)
+                        }
+                        className={styles.inputField}
+                        placeholder="Cost (in pennies)"
+                      />
+                      <input
+                        type="number"
+                        value={item.taxRate}
+                        onChange={(e) =>
+                          handleItemChange(index, "taxRate", e.target.value)
+                        }
+                        className={styles.inputField}
+                        placeholder="Tax Rate (e.g., 0.2)"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveItem(index)}
+                        className={styles.removeItemButton}
+                      >
+                        Remove Item
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={handleAddItem}
+                    className={styles.addItemButton}
+                  >
+                    Add Item
+                  </button>
+                </div>
+              </div>
             ) : (
               <div className={styles.taxPaymentForm}>
                 <div className={styles.inputGroup}>
@@ -70,7 +195,7 @@ const TaxPage = () => {
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     className={styles.inputField}
-                    placeholder="Enter amount e.g. 74901"
+                    placeholder="Enter amount"
                   />
                 </div>
               </div>
@@ -78,6 +203,11 @@ const TaxPage = () => {
           </div>
         ) : (
           <></>
+        )}
+        {transactionType ? (
+          <button className={styles.calculateButton}>Submit Transaction</button>
+        ) : (
+          ""
         )}
       </div>
 
