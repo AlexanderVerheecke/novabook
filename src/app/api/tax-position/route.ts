@@ -44,6 +44,8 @@ type TaxPaymentEvent = {
 type TransactionEvent = SaleEvent | TaxPaymentEvent;
 const transactions: TransactionEvent[] = [];
 
+// ENDPOINT FOR POSTAN [GET] localhost:3000/api/tax-position
+
 export async function GET(request: NextRequest) {
   const date = request.nextUrl.searchParams.get("date");
   if (!date) {
@@ -57,15 +59,14 @@ export async function GET(request: NextRequest) {
   let sumSalesTax = 0;
   let sumTaxPayments = 0;
 
- // get the data from transactions, then check if SALES or TAX_PAYMENT, and do calculations base on that
+  // get the data from transactions, then check if SALES or TAX_PAYMENT, and do calculations base on that
 
   for (const event of transactions) {
     const eventDate = new Date(event.date);
 
-     // we only want transaction history for before or on querydate, disregard future dates
+    // we only want transaction history for before or on querydate, disregard future dates
 
     if (eventDate <= queryDate) {
-
       if (event.eventType === "SALES") {
         for (const item of event.items) {
           sumSalesTax += item.cost * item.taxRate;
@@ -82,5 +83,4 @@ export async function GET(request: NextRequest) {
     date: queryDate.toISOString(),
     taxPosition: taxPos,
   });
-
 }
