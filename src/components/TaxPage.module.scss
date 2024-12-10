@@ -1,16 +1,18 @@
 .container {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
-  padding: 20px;
+  width: 100%;
 }
 
 .leftSide,
+.centerSide,
 .rightSide {
-  width: 48%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
 }
 
 .title {
-  font-size: 2rem;
-  margin-bottom: 20px;
+  text-align: center;
 }

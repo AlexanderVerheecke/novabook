@@ -5,10 +5,13 @@ const TaxPage = () => {
   return (
     <div className={styles.container}>
       <div className={styles.leftSide}>
+        <h1 className={styles.title}>Ingest</h1>
+      </div>
+      <div className={styles.centerSide}>
         <h1 className={styles.title}>Query Tax Position</h1>
       </div>
       <div className={styles.rightSide}>
-        <h1 className={styles.title}>Right Page</h1>
+        <h1 className={styles.title}>Amend Sale</h1>
       </div>
     </div>
   );
