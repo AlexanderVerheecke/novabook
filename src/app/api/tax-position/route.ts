@@ -4,13 +4,16 @@ import { globalStore } from "@/app/lib/globalStore";
 export async function GET(request: NextRequest) {
   const date = request.nextUrl.searchParams.get("date");
   const store = global.globalStore || globalStore;
+
+  console.log(`Received tax position request with date: ${date}`);
+
   if (!date) {
+    console.warn("Missing 'date' query parameter");
     return NextResponse.json(
       { error: "Missing 'date' query parameter" },
       { status: 400 }
     );
   }
-  // add validation, is date in correct format?
   const queryDate = new Date(date as string);
   let sumSalesTax = 0;
   let sumTaxPayments = 0;
@@ -19,7 +22,6 @@ export async function GET(request: NextRequest) {
   const transactions = store.getTransactions();
 
   for (const event of transactions) {
-    console.log(event);
     const eventDate = new Date(event.date);
 
     // we only want transaction history for before or on querydate, disregard future dates
@@ -36,6 +38,10 @@ export async function GET(request: NextRequest) {
   }
 
   const taxPos = sumSalesTax - sumTaxPayments;
+
+  console.log(
+    `Calculated tax position: ${taxPos} (Sales Tax: ${sumSalesTax}, Tax Payments: ${sumTaxPayments})`
+  );
 
   return NextResponse.json({
     date: queryDate.toISOString(),
