@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { transactions } from "../data";
 
 type SaleEvent = {
   eventType: "SALES";
@@ -18,9 +19,6 @@ type TaxPaymentEvent = {
 };
 
 type TransactionEvent = SaleEvent | TaxPaymentEvent;
-
-// Ideally I would want this to be in a DB but for simplicity an array will act as db to be pused on
-let transactions: TransactionEvent[] = [];
 
 export async function POST(req: NextRequest) {
   try {

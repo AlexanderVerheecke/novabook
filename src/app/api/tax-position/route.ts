@@ -1,50 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-// Allows a user to query their tax position at any given point in time. This should calculate the tax position from ingested events and any further user interaction
-
-// Method: GET
-// Request path: /tax-position
-// Request query parameters:
-// date: Date and time ISO 8601
-// Mandatory
-// Example: 2024-02-22T17:29:39Z
-// No Request body
-
-// Successful response
-// Status code: 200
-// Response JSON body:
-// {
-//   “date”: Date and time ISO 8601
-//   “taxPosition”: number
-// }
-
-// Example body:
-// {
-//   “date”: “2024-02-22T17:29:39Z”,
-//   “taxPosition”: 49 // £0.49
-// }
-
-type SaleEvent = {
-  eventType: "SALES";
-  date: string;
-  invoiceId: string;
-  items: {
-    itemId: string;
-    cost: number;
-    taxRate: number;
-  }[];
-};
-
-type TaxPaymentEvent = {
-  eventType: "TAX_PAYMENT";
-  date: string;
-  amount: number;
-};
-
-type TransactionEvent = SaleEvent | TaxPaymentEvent;
-const transactions: TransactionEvent[] = [];
-
-// ENDPOINT FOR POSTAN [GET] localhost:3000/api/tax-position
+import { transactions } from "../data";
 
 export async function GET(request: NextRequest) {
   const date = request.nextUrl.searchParams.get("date");
@@ -62,6 +17,7 @@ export async function GET(request: NextRequest) {
   // get the data from transactions, then check if SALES or TAX_PAYMENT, and do calculations base on that
 
   for (const event of transactions) {
+    console.log(event);
     const eventDate = new Date(event.date);
 
     // we only want transaction history for before or on querydate, disregard future dates

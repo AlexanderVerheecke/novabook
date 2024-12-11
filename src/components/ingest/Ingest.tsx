@@ -112,7 +112,6 @@ const Ingest = () => {
       });
 
       const result = await response.json();
-      console.log(result);
       alert(result.message || "Transaction sent successfully!");
     } catch (error) {
       alert("Error sending transaction data");
