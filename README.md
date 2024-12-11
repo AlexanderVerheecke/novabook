@@ -17,7 +17,7 @@ git clone https://github.com/AlexanderVerheecke/novabook
 
 ## 2. **Install dependencies**
 
-Navigate into the project
+Navigate into the project `cd novabook` and run the following command to install all the required depenencies.
 `npm install`
 
 ## 3. **Run the development sever**
