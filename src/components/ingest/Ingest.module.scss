@@ -1,0 +1,104 @@
+.select {
+  max-width: fit-content;
+}
+.selectContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.transactionSelect {
+  width: 250px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.transactionDisplay {
+  background: #f1f1f1;
+  color: #333;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  text-align: center;
+  margin-top: 10px;
+  width: 100%;
+  max-width: 250px;
+}
+.inputGroup {
+  margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.inputField {
+  width: 160px;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+// Sales transactions
+.salesForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.itemsSection {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.itemRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.removeItemButton {
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.removeItemButton:hover {
+  background-color: #c82333;
+}
+
+.addItemButton {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 15px 0px;
+}
+
+.addItemButton:hover {
+  background-color: #218838;
+}
+
+//  Tax Payement
+.taxPaymentForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

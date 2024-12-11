@@ -1,0 +1,30 @@
+.centerSide {
+  align-items: center;
+
+  .datePickerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .dateInput {
+    width: 250px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+
+  .dateDisplay {
+    background: #f1f1f1;
+    color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 10px;
+    width: 100%;
+  }
+}
