@@ -60,7 +60,7 @@ Key Features:
 - Date Selection: Users can select a date to calculate the tax position up until that point.
 - Tax Position Calculation: Based on sales (tax collected) and tax payments, the system calculates the net tax position.
 
-  Usage:
+Usage:
 
 - Users enter a desired date and click the "Calculate Tax Position" button.
 - The system returns the net tax position, which is the difference between collected sales tax and paid tax.
