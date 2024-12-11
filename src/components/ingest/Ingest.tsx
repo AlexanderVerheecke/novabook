@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Ingest.module.scss";
+
 type Item = {
   itemId: string;
   cost: string;
@@ -8,8 +9,7 @@ type Item = {
 
 const Ingest = () => {
   const [date, setDate] = useState("");
-  const [taxPosition, setTaxPosition] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
+
   const [transactionType, setTransactionType] = useState<string>("");
 
   const [invoiceId, setInvoiceId] = useState("");
@@ -19,13 +19,17 @@ const Ingest = () => {
   const [amount, setAmount] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
-  // whenever something in form is changed, cehck if all valid
+  // whenever something in form is changed, check if all valid
   useEffect(() => {
     validateIngest();
   }, [transactionType, date, invoiceId, items, amount]);
 
   const validateIngest = () => {
     let validationError = null;
+
+    if (!date) {
+      validationError = "Date is required.";
+    }
 
     if (transactionType === "TAX_PAYMENT") {
       if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
@@ -108,46 +112,21 @@ const Ingest = () => {
       });
 
       const result = await response.json();
+      console.log(result);
       alert(result.message || "Transaction sent successfully!");
     } catch (error) {
       alert("Error sending transaction data");
     }
   };
 
-  const handleButtonClick = async () => {
-    if (!date) {
-      alert("Please select a date first.");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `/api/tax-position?date=${encodeURIComponent(date)}`
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to fetch tax position");
-      }
-
-      const data = await response.json();
-      setTaxPosition(data.taxPosition);
-      setError(null);
-    } catch (err: any) {
-      console.error("Error fetching tax position:", err);
-      setError(err.message);
-      setTaxPosition(null);
-    }
-  };
-
   return (
     <div>
-      {" "}
       <h1 className="title">Ingest</h1>
       <p className="instruction">
-        Send your sales and tax payments. Choose the type and input the
+        Send your sales and tax payments. Choose the type and then input the
         requested information
-      </p>{" "}
+      </p>
+
       <div className={styles.selectContainer}>
         <select
           value={transactionType}
@@ -162,10 +141,20 @@ const Ingest = () => {
       {transactionType
         ? `Chosen transaction: ${transactionType}`
         : "No transaction selected"}
+
       {transactionType ? (
         <div>
           {transactionType === "SALES" ? (
             <div className={styles.salesForm}>
+              <div className={styles.inputGroup}>
+                <label>Date</label>
+                <input
+                  type="datetime-local"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className={styles.inputField}
+                />
+              </div>
               <div className={styles.inputGroup}>
                 <label>Invoice ID</label>
                 <input
