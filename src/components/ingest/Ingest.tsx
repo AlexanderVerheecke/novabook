@@ -144,17 +144,17 @@ const Ingest = () => {
 
       {transactionType ? (
         <div>
+          <div className={styles.inputGroup}>
+            <label>Date</label>
+            <input
+              type="datetime-local"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className={styles.inputField}
+            />
+          </div>
           {transactionType === "SALES" ? (
             <div className={styles.salesForm}>
-              <div className={styles.inputGroup}>
-                <label>Date</label>
-                <input
-                  type="datetime-local"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className={styles.inputField}
-                />
-              </div>
               <div className={styles.inputGroup}>
                 <label>Invoice ID</label>
                 <input
