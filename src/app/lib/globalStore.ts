@@ -17,8 +17,6 @@ export type TaxPaymentEvent = {
 
 export type TransactionEvent = SaleEvent | TaxPaymentEvent;
 
-
-// Extend the global interface to include our custom property
 declare global {
   var globalStore: GlobalStore | undefined;
 }
@@ -30,7 +28,8 @@ class GlobalStore {
   private constructor() {}
 
   public static getInstance(): GlobalStore {
-    // Use global variable if it exists, otherwise create new instance
+
+    //use exisiting if exist, else new
     if (global.globalStore) {
       return global.globalStore;
     }
@@ -45,7 +44,6 @@ class GlobalStore {
 
   public addTransaction(transaction: TransactionEvent): void {
     this.transactions.push(transaction);
-    console.log("Transaction added:", this.transactions);
   }
 
   public getTransactions(): TransactionEvent[] {
@@ -54,6 +52,13 @@ class GlobalStore {
 
   public clearTransactions(): void {
     this.transactions = [];
+  }
+  public getTransactionByInvoiceId(invoiceId: string): SaleEvent | null {
+    const saleEvent = this.transactions.find(
+      (t): t is SaleEvent =>
+        t.eventType === "SALES" && t.invoiceId === invoiceId
+    );
+    return saleEvent || null;
   }
 }
 
