@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { transactions } from "../data";
 
+import { globalStore } from "@/app/lib/globalStore";
 export async function GET(request: NextRequest) {
   const date = request.nextUrl.searchParams.get("date");
+  const store = global.globalStore || globalStore;
   if (!date) {
     return NextResponse.json(
       { error: "Missing 'date' query parameter" },
@@ -15,6 +16,7 @@ export async function GET(request: NextRequest) {
   let sumTaxPayments = 0;
 
   // get the data from transactions, then check if SALES or TAX_PAYMENT, and do calculations base on that
+  const transactions = store.getTransactions();
 
   for (const event of transactions) {
     console.log(event);

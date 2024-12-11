@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { transactions } from "../data";
 
-type SaleEvent = {
+export type SaleEvent = {
   eventType: "SALES";
   date: string;
   invoiceId: string;
@@ -12,15 +11,17 @@ type SaleEvent = {
   }[];
 };
 
-type TaxPaymentEvent = {
+export type TaxPaymentEvent = {
   eventType: "TAX_PAYMENT";
   date: string;
   amount: number;
 };
 
-type TransactionEvent = SaleEvent | TaxPaymentEvent;
+export type TransactionEvent = SaleEvent | TaxPaymentEvent;
 
+import { globalStore } from "@/app/lib/globalStore";
 export async function POST(req: NextRequest) {
+  const store = global.globalStore || globalStore;
   try {
     const event: TransactionEvent = await req.json();
 
@@ -62,8 +63,7 @@ export async function POST(req: NextRequest) {
           );
         }
       }
-
-      transactions.push(saleEvent);
+      store.addTransaction(saleEvent);
       return NextResponse.json({}, { status: 202 });
     }
 
@@ -87,8 +87,8 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
+      store.addTransaction(taxPaymentEvent);
 
-      transactions.push(taxPaymentEvent);
       return NextResponse.json({}, { status: 202 });
     }
 
